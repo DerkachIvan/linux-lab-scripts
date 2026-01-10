@@ -9,6 +9,8 @@
 TARGET_DIR=${1:-/etc}
 EXTENSION=${2:-"*"}
 
+echo "Скрипт запущено: $(date)"
+
 #перевірка існування директорії
 if [ ! -d "$TARGET_DIR" ]; then
     echo "Помилка: директорія $TARGET_DIR не існує"
