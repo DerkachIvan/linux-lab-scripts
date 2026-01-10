@@ -16,4 +16,4 @@ jobs:
           for f in *.sh; do
             echo "Checking $f"
             bash -n "$f"
-        done
+            done
