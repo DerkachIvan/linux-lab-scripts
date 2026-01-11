@@ -87,7 +87,6 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            /var/cache/apt
             ~/.cache/apt
           key: apt-${{ matrix.ubuntu }}-${{ github.sha }}
 
