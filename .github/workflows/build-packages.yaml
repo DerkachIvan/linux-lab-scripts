@@ -26,6 +26,7 @@ jobs:
         run: |
           mkdir -p ~/rpmbuild/SOURCES/count-files-1.0
           cp count_files.sh ~/rpmbuild/SOURCES/count-files-1.0/
+          cp count_files.conf ~/rpmbuild/SOURCES/count-files-1.0/
           cd ~/rpmbuild/SOURCES
           tar czvf count-files-1.0.tar.gz count-files-1.0
 
