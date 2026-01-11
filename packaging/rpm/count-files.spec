@@ -29,10 +29,10 @@ echo "Починається встановлення пакета count-files..
 
 %install
 mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_mandir}/man1
+#mkdir -p %{buildroot}%{_mandir}/man1
 
 install -m 755 count_files.sh %{buildroot}%{_bindir}/count_files
-install -m 644 man/count_files.1 %{buildroot}%{_mandir}/man1/
+#install -m 644 man/count_files.1 %{buildroot}%{_mandir}/man1/
 
 %post
 echo "Пакет count-files успішно встановлено"
