@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rpm-package
-          path: ~/rpmbuild/RPMS/*.rpm
+          path: ~/rpmbuild/RPMS/noarch/*.rpm
 
   build-deb:
     runs-on: ubuntu-latest
