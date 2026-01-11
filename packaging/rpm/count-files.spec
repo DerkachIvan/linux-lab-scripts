@@ -46,7 +46,7 @@ echo "Для запуску використовуйте команду: count_f
 
 %files
 %{_bindir}/count_files
-%{_mandir}/man1/count_files.1*
+#%{_mandir}/man1/count_files.1*
 
 %changelog
 * Sat Jan 10 2026 Derkach Ivan <vanyaderkach229@gmail.com> - 1.0-1
