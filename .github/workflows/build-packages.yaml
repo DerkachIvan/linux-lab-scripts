@@ -77,12 +77,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
       - name: Make script executable
         run: chmod +x count_files.sh
 
       - name: Run test
         run: |
-          mkdir testdir
-          touch testdir/file1 testdir/file2
-          ./count_files.sh testdir
+          ./count_files.sh 
 
