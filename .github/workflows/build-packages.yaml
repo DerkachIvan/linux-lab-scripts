@@ -57,6 +57,7 @@ jobs:
         run: |
           mkdir -p build/count-files-1.0
           cp count_files.sh build/count-files-1.0/
+          cp count_files.conf build/count-files-1.0/
           cp -r packaging/deb/debian build/count-files-1.0/
 
       - name: Build DEB
