@@ -10,12 +10,39 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-rpm:
+  test:
+    name: Test script
     runs-on: ubuntu-latest
-    container: fedora:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Make script executable
+        run: chmod +x count_files.sh
+
+      - name: Run test
+        run: ./count_files.sh 
+
+  build-rpm:
+    name: Build RPM (Fedora ${{ matrix.fedora }})
+    needs: test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        fedora: [38, 39, 40]
+
+    container:
+      image: "fedora:${{ matrix.fedora }}"
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache RPM build
+        uses: actions/cache@v4
+        with:
+          path: ~/rpmbuild
+          key: rpm-${{ matrix.fedora }}-${{ github.sha }}
 
       - name: Install build tools
         run: |
@@ -41,14 +68,28 @@ jobs:
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rpm-package
+          name: rpm-package-fedora-${{ matrix.fedora }}
           path: ~/rpmbuild/RPMS/noarch/*.rpm
 
   build-deb:
+    name: Build DEB (Ubuntu ${{ matrix.ubuntu }})
+    needs: test
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ubuntu: [20.04, 22.04, 24.04]
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Cache APT
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt
+            ~/.cache/apt
+          key: apt-${{ matrix.ubuntu }}-${{ github.sha }}
 
       - name: Install build tools
         run: |
@@ -70,7 +111,7 @@ jobs:
       - name: Upload DEB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: deb-package
+          name: deb-package-ubuntu-${{ matrix.ubuntu }}
           path: build/*.deb
 
   release:
@@ -79,33 +120,12 @@ jobs:
     needs: [build-rpm, build-deb]
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: Download RPM artifacts
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: rpm-package
-
-      - name: Download DEB artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: deb-package
 
       - name: Create Release and upload packages
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            *.rpm
-            *.deb
-
-  test:
-    name: Test script
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      
-      - name: Make script executable
-        run: chmod +x count_files.sh
-
-      - name: Run test
-        run: ./count_files.sh 
-
+            **/*.rpm
+            **/*.deb
