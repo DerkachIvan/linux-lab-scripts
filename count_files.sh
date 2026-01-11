@@ -7,7 +7,7 @@
 
 #внесені зміни в скрипт для нової гілки
 
-CONFIG="/etc/count-files.conf"
+CONFIG="/etc/count_files.conf"
 [ -f "$CONFIG" ] && source "$CONFIG"
 
 #параметри командного рядка

@@ -30,16 +30,22 @@ echo "Починається встановлення пакета count-files..
 %install
 mkdir -p %{buildroot}%{_bindir}
 #mkdir -p %{buildroot}%{_mandir}/man1
+mkdir -p %{buildroot}%{_sysconfdir}
 
 install -m 755 count_files.sh %{buildroot}%{_bindir}/count_files
 #install -m 644 man/count_files.1 %{buildroot}%{_mandir}/man1/
-
+install -m 644 count_files.conf %{buildroot}%{_sysconfdir}/count_files.conf
 %post
 echo "Пакет count-files успішно встановлено"
 
+if [ ! -f %{_sysconfdir}/count-files.conf ]; then
+cat << EOF > %{_sysconfdir}/count-files.conf
 # Конфігурація count-files
 TARGET_DIR=/etc
 EXTENSION=*
+EOF
+    echo "Створено конфігураційний файл %{_sysconfdir}/count-files.conf"
+fi
 
 echo "Для запуску використовуйте команду: count_files"
 
@@ -47,6 +53,7 @@ echo "Для запуску використовуйте команду: count_f
 %files
 %{_bindir}/count_files
 #%{_mandir}/man1/count_files.1*
+%config(noreplace) %{_sysconfdir}/count-files.conf
 
 %changelog
 * Sat Jan 10 2026 Derkach Ivan <vanyaderkach229@gmail.com> - 1.0-1
