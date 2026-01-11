@@ -107,6 +107,12 @@ jobs:
           cd build/count-files-1.0
           dpkg-buildpackage -us -uc -b
 
+      - name: Rename DEB with Ubuntu version
+        run: |
+          for f in build/*.deb; do
+            mv "$f" "${f%.deb}-ubuntu${{ matrix.ubuntu }}.deb"
+          done
+
       - name: Upload DEB artifact
         uses: actions/upload-artifact@v4
         with:
