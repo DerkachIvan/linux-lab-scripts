@@ -53,7 +53,7 @@ echo "Для запуску використовуйте команду: count_f
 %files
 %{_bindir}/count_files
 #%{_mandir}/man1/count_files.1*
-%config(noreplace) %{_sysconfdir}/count-files.conf
+%config(noreplace) %{_sysconfdir}/count_files.conf
 
 %changelog
 * Sat Jan 10 2026 Derkach Ivan <vanyaderkach229@gmail.com> - 1.0-1
