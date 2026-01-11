@@ -71,6 +71,22 @@ jobs:
           name: deb-package
           path: build/*.deb
 
+  release:
+    runs-on: ubuntu-latest
+    needs: [build-rpm, build-deb]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: rpm-package
+      - uses: actions/download-artifact@v4
+        with:
+          name: deb-package
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *.rpm
+            *.deb
+
   test:
     name: Test script
     runs-on: ubuntu-latest
