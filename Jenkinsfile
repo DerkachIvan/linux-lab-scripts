@@ -68,6 +68,7 @@ pipeline{
                             ls -la ~/rpmbuild/RPMS/noarch || true
                             ls -la ${WORKSPACE} || true
                         '''
+                        stash name: 'rpm-artifact', includes: 'artifacts/*.rpm'
                     }
                 }
 
@@ -96,6 +97,7 @@ pipeline{
                             ls -la ../ || true
                             ls -la ${WORKSPACE} || true
                         '''
+                        stash name: 'deb-artifact', includes: 'artifacts/*.deb'
                     }
                 }
             }
@@ -138,12 +140,15 @@ pipeline{
 
     post {
         success {
+            unstash 'rpm-artifact'
+            unstash 'deb-artifact'
             sh '''
                 echo "=== FILES ==="
-                ls -la || true
+                ls -la artifacts
             '''
-            archiveArtifacts artifacts: '*.rpm', allowEmptyArchive: true
-            archiveArtifacts artifacts: '*.deb', allowEmptyArchive: false
+
+            archiveArtifacts artifacts: 'artifacts/*.rpm'
+            archiveArtifacts artifacts: 'artifacts/*.deb'
             echo 'Build completed successfully!'
             /*mail to: 'derkachvanya229@gmail.com',
                 subject: "Jenkins build SUCCESS: ${env.JOB_NAME}",
