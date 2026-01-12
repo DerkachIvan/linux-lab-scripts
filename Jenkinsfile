@@ -4,12 +4,14 @@ pipeline{
     environment {
         PACKAGE_NAME = 'count-files'
         PACKAGE_VERSION = '1.0'
+        ARTIFACTS_DIR = 'artifacts'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+                sh "mkdir -p ${ARTIFACTS_DIR}"
                 sh "ls -la"
             }
         }
@@ -39,7 +41,7 @@ pipeline{
                     tar czvf ${PACKAGE_NAME}-${PACKAGE_VERSION}.tar.gz ${PACKAGE_NAME}-${PACKAGE_VERSION}
                     cp ${WORKSPACE}/packaging/rpm/count-files.spec ~/rpmbuild/SPECS/
                     rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
-                    cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/
+                    cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/${ARTIFACTS_DIR}/
                 '''
             }
         }
@@ -63,7 +65,7 @@ pipeline{
                     cd build/${PACKAGE_NAME}-${PACKAGE_VERSION}
                     dpkg-buildpackage -us -uc -b
                     
-                    cp ../*.deb ${WORKSPACE}/
+                    cp ../*.deb ${WORKSPACE}/${ARTIFACTS_DIR}/
                 '''
             }
         }
@@ -77,7 +79,7 @@ pipeline{
             }
             steps {
                 sh '''
-                    rpm -ivh ${PACKAGE_NAME}-*.rpm
+                    rpm -ivh ${ARTIFACTS_DIR}/${PACKAGE_NAME}-*.rpm
                     count_files
                     rpm -e ${PACKAGE_NAME}
                 '''
@@ -94,7 +96,7 @@ pipeline{
             steps {
                 sh '''
                     set -e
-                    dpkg -i ${PACKAGE_NAME}_*.deb || apt-get install -f -y
+                    dpkg -i ${ARTIFACTS_DIR}/${PACKAGE_NAME}_*.deb || apt-get install -f -y
                     count_files
                     apt-get remove -y ${PACKAGE_NAME} || true
                     echo "apt-get remove exit code $?"
@@ -105,7 +107,7 @@ pipeline{
 
     post {
         success {
-            archiveArtifacts artifacts: '*.rpm, *.deb'
+            archiveArtifacts artifacts: 'artifacts/*.rpm, artifacts/*.deb'
             echo 'Build completed successfully!'
         }
         failure {
