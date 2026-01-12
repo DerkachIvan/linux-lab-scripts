@@ -4,14 +4,12 @@ pipeline{
     environment {
         PACKAGE_NAME = 'count-files'
         PACKAGE_VERSION = '1.0'
-        ARTIFACTS_DIR = 'artifacts'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
-                sh "mkdir -p ${ARTIFACTS_DIR}"
                 sh "ls -la"
             }
         }
@@ -61,14 +59,12 @@ pipeline{
                             cp ${WORKSPACE}/packaging/rpm/count-files.spec ~/rpmbuild/SPECS/
                             rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
 
-                            mkdir -p ${WORKSPACE}/artifacts
                             cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/
 
                             echo "=== RPM FILES ==="
                             ls -la ~/rpmbuild/RPMS/noarch || true
-                            ls -la ${WORKSPACE} || true
                         '''
-                        stash name: 'rpm-artifact', includes: 'artifacts/*.rpm'
+                        stash name: 'rpm-artifact', includes: '${WORKSPACE}/*.rpm'
                     }
                 }
 
@@ -91,13 +87,10 @@ pipeline{
                             cd build/${PACKAGE_NAME}-${PACKAGE_VERSION}
                             dpkg-buildpackage -us -uc -b
                             
-                            mkdir -p ${WORKSPACE}/artifacts
-                            cp ../*.deb ${WORKSPACE}/
                             echo "=== DEB FILES ==="
-                            ls -la ../ || true
-                            ls -la ${WORKSPACE} || true
+                            ls -la ../
                         '''
-                        stash name: 'deb-artifact', includes: 'artifacts/*.deb'
+                        stash name: 'deb-artifact', includes: '../*.deb'
                     }
                 }
             }
@@ -161,7 +154,7 @@ pipeline{
                 body: "Build ${env.BUILD_NUMBER} failed.\n${env.BUILD_URL}"*/
         }
         always {
-            echo 'Test output'
+            cleanWs()
         }
     }
 }
