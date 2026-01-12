@@ -39,7 +39,7 @@ pipeline{
         }
 
         stage('Build packages'){
-            paralle{
+            parallel{
                 
                 stage('Build RPM') {
                     agent{
