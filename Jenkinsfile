@@ -153,21 +153,20 @@ pipeline{
                 withCredentials([string(credentialsId: 'git-push-creds', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         set -e
-                        
+
                         # Налаштовуємо git
                         git config user.name "jenkins"
                         git config user.email "jenkins@localhost"
 
-                        # Переключаємося на main і підтягнемо останні зміни
-                        if git show-ref --verify --quiet refs/heads/main; then
+                        # Переконаємося, що ми на main
+                        CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+                        if [ "$CURRENT_BRANCH" != "main" ]; then
                             git checkout main
                             git pull --rebase origin main
-                        else
-                            git fetch origin main:main
-                            git checkout main
                         fi
 
-                        # Створюємо директорії для пакетів
+                        # Очистимо старі пакети, щоб уникнути конфліктів
+                        rm -rf repo/rpm/* repo/deb/* || true
                         mkdir -p repo/rpm repo/deb
 
                         # Копіюємо пакети, якщо вони є
