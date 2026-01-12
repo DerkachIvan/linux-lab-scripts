@@ -112,7 +112,7 @@ pipeline{
             echo 'Build failed!'
         }
         always {
-            cleanWs() notFailBuild: true
+            echo 'Test output'
         }
     }
 }
