@@ -37,8 +37,8 @@ pipeline{
                     cp count_files.sh ~/rpmbuild/SOURCES/${PACKAGE_NAME}-${PACKAGE_VERSION}/
                     cd ~/rpmbuild/SOURCES/
                     tar czvf ${PACKAGE_NAME}-${PACKAGE_VERSION}.tar.gz ${PACKAGE_NAME}-${PACKAGE_VERSION}
-                    cp ${WORKSPACE}/packaging/rpm/count_files.spec ~/rpmbuild/SPECS/
-                    rpmbuild -ba ~/rpmbuild/SPECS/count_files.spec
+                    cp ${WORKSPACE}/packaging/rpm/count-files.spec ~/rpmbuild/SPECS/
+                    rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
                     cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/
                 '''
             }
