@@ -46,6 +46,10 @@ pipeline{
 
                     mkdir -p ${WORKSPACE}/artifacts
                     cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/${ARTIFACTS_DIR}/
+
+                    echo "=== RPM FILES ==="
+                    ls -la ~/rpmbuild/RPMS/noarch || true
+                    ls -la ${WORKSPACE}/artifacts || true
                 '''
             }
         }
@@ -112,8 +116,9 @@ pipeline{
 
     post {
         success {
-            archiveArtifacts artifacts: '${ARTIFACTS_DIR}/*.rpm, ${ARTIFACTS_DIR}/*.deb'
-            echo 'Build completed successfully!'
+        archiveArtifacts artifacts: 'artifacts/*.deb', allowEmptyArchive: false
+        archiveArtifacts artifacts: 'artifacts/*.rpm', allowEmptyArchive: true
+        echo 'Build completed successfully!'
         }
         failure {
             echo 'Build failed!'
