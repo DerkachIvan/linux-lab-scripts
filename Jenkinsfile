@@ -24,17 +24,7 @@ pipeline{
             }
             steps {
                 sh '''
-                    echo "=== ShellCheck (ERROR only) ==="
-                    set +e
-                    shellcheck -S error count_files.sh
-                    rc=$?
-                    set -e
-
-                    echo "ShellCheck exit code: $rc"
-                    if [ "$rc" -ne 0 ]; then
-                        echo "ShellCheck errors detected"
-                        exit $rc
-                    fi
+                    shellcheck count_files.sh
                 '''
             }
         }
@@ -155,15 +145,15 @@ pipeline{
             archiveArtifacts artifacts: 'artifacts/*.deb', allowEmptyArchive: false
             archiveArtifacts artifacts: 'artifacts/*.rpm', allowEmptyArchive: true
             echo 'Build completed successfully!'
-            mail to: 'derkachvanya229@gmail.com',
+            /*mail to: 'derkachvanya229@gmail.com',
                 subject: "Jenkins build SUCCESS: ${env.JOB_NAME}",
-                body: "Build ${env.BUILD_NUMBER} succeeded."
+                body: "Build ${env.BUILD_NUMBER} succeeded."*/
         }
         failure {
             echo 'Build failed!'
-            mail to: 'derkachvanya229@gmail.com',
+            /*mail to: 'derkachvanya229@gmail.com',
                 subject: "Jenkins build FAILED: ${env.JOB_NAME}",
-                body: "Build ${env.BUILD_NUMBER} failed.\n${env.BUILD_URL}"
+                body: "Build ${env.BUILD_NUMBER} failed.\n${env.BUILD_URL}"*/
         }
         always {
             echo 'Test output'
