@@ -1,5 +1,5 @@
 Name:		count-files
-Version:	1.0
+Version:	%{?version}
 Release:	1%{?dist}
 Summary:	Enhanced script to count files with configuration support
 

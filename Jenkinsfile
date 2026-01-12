@@ -67,7 +67,9 @@ pipeline{
                             
                             tar czvf ${PACKAGE_NAME}-${PACKAGE_VERSION}.tar.gz ${PACKAGE_NAME}-${PACKAGE_VERSION}
                             cp ${WORKSPACE}/packaging/rpm/count-files.spec ~/rpmbuild/SPECS/
-                            rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
+                            rpmbuild -ba \
+                                --define "version ${PACKAGE_VERSION}" \
+                                ~/rpmbuild/SPECS/count-files.spec
 
                             mkdir -p ${WORKSPACE}/artifacts
                             cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/
