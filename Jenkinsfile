@@ -3,16 +3,26 @@ pipeline{
 
     environment {
         PACKAGE_NAME = 'count-files'
-        PACKAGE_VERSION = '1.0'
+        PACKAGE_VERSION = sh(
+            script: "git describe --tags --abbrev=0 || echo 1.0.0",
+            returnStdout: true
+        ).trim()
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
-                sh "ls -la"
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/DerkachIvan/linux-lab-scripts.git',
+                        credentialsId: 'git-push-creds'
+                    ]]
+                ])
             }
         }
+
 
         /*stage('ShellCheck') {
             agent {
@@ -133,6 +143,40 @@ pipeline{
                 '''
             }
         }
+
+        stage('Publish packages to Git') {
+            when {
+                branch 'main'
+            }
+
+            agent any
+            steps {
+                unstash 'rpm-artifacts'
+                unstash 'deb-artifacts'
+
+                sh '''
+                    set -e
+
+                    mkdir -p repo/rpm repo/deb
+
+                    cp artifacts/*.rpm repo/rpm/ || true
+                    cp artifacts/*.deb repo/deb/ || true
+
+                    git config user.name "jenkins"
+                    git config user.email "jenkins@localhost"
+
+                    git add repo/
+
+                    git commit -m "Publish packages version ${PACKAGE_VERSION}" || echo "Nothing to commit"
+
+                    git tag v${PACKAGE_VERSION} || echo "Tag already exists"
+
+                    git push origin main
+                    git push origin v${PACKAGE_VERSION}
+                '''
+            }
+        }
+
     }
 
     post {
