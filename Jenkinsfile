@@ -148,33 +148,48 @@ pipeline{
         }
 
         stage('Publish packages to Git') {
-            when {
-                branch 'main'
-            }
-
             agent any
             steps {
 
                 sh '''
                     set -e
 
+                    # Створюємо директорії для пакетів
                     mkdir -p repo/rpm repo/deb
 
-                    cp artifacts/*.rpm repo/rpm/ || true
-                    cp artifacts/*.deb repo/deb/ || true
+                    # Копіюємо пакети, якщо вони є
+                    cp artifacts/*.rpm repo/rpm/ 2>/dev/null || true
+                    cp artifacts/*.deb repo/deb/ 2>/dev/null || true
 
+                    # Налаштовуємо git
                     git config user.name "jenkins"
                     git config user.email "jenkins@localhost"
 
+                    # Переключаємося на main і підтягнемо останні зміни
+                    git fetch origin main:main
+                    git checkout main
+
+                    # Додаємо зміни
                     git add repo/
 
-                    git commit -m "Publish packages version ${PACKAGE_VERSION}" || echo "Nothing to commit"
+                    # Комітимо, якщо є зміни
+                    if ! git diff-index --quiet HEAD --; then
+                        git commit -m "Publish packages version ${PACKAGE_VERSION}"
+                    else
+                        echo "Nothing to commit"
+                    fi
 
-                    git tag v${PACKAGE_VERSION} || echo "Tag already exists"
+                    # Створюємо тег, якщо його ще немає
+                    if git rev-parse "v${PACKAGE_VERSION}" >/dev/null 2>&1; then
+                        echo "Tag v${PACKAGE_VERSION} already exists"
+                    else
+                        git tag -a v${PACKAGE_VERSION} -m "Release v${PACKAGE_VERSION}"
+                    fi
 
+                    # Пушимо main та тег
                     git push origin main
-                    git push origin v${PACKAGE_VERSION}
-                '''
+                    git push origin v${PACKAGE_VERSION} || echo "Tag already pushed"
+            '''
             }
         }
 
