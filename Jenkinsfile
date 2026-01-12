@@ -88,7 +88,7 @@ pipeline{
             }
             steps {
                 sh '''
-                    rpm -ivh ${ARTIFACTS_DIR}/${PACKAGE_NAME}-*.rpm
+                    rpm -ivh ${WORKSPACE}/${ARTIFACTS_DIR}/${PACKAGE_NAME}-*.rpm
                     count_files
                     rpm -e ${PACKAGE_NAME}
                 '''
@@ -105,7 +105,7 @@ pipeline{
             steps {
                 sh '''
                     set -e
-                    dpkg -i ${ARTIFACTS_DIR}/${PACKAGE_NAME}_*.deb || apt-get install -f -y
+                    dpkg -i ${WORKSPACE}/${ARTIFACTS_DIR}/${PACKAGE_NAME}_*.deb || apt-get install -f -y
                     count_files
                     apt-get remove -y ${PACKAGE_NAME} || true
                     echo "apt-get remove exit code $?"
