@@ -150,46 +150,47 @@ pipeline{
         stage('Publish packages to Git') {
             agent any
             steps {
+                withCredentials([string(credentialsId: 'git-push-creds', variable: 'GITHUB_TOKEN')]) {
+                    sh '''
+                        set -e
 
-                sh '''
-                    set -e
+                        # Створюємо директорії для пакетів
+                        mkdir -p repo/rpm repo/deb
 
-                    # Створюємо директорії для пакетів
-                    mkdir -p repo/rpm repo/deb
+                        # Копіюємо пакети, якщо вони є
+                        cp artifacts/*.rpm repo/rpm/ 2>/dev/null || true
+                        cp artifacts/*.deb repo/deb/ 2>/dev/null || true
 
-                    # Копіюємо пакети, якщо вони є
-                    cp artifacts/*.rpm repo/rpm/ 2>/dev/null || true
-                    cp artifacts/*.deb repo/deb/ 2>/dev/null || true
+                        # Налаштовуємо git
+                        git config user.name "jenkins"
+                        git config user.email "jenkins@localhost"
 
-                    # Налаштовуємо git
-                    git config user.name "jenkins"
-                    git config user.email "jenkins@localhost"
+                        # Переключаємося на main і підтягнемо останні зміни
+                        git fetch origin main:main
+                        git checkout main
 
-                    # Переключаємося на main і підтягнемо останні зміни
-                    git fetch origin main:main
-                    git checkout main
+                        # Додаємо зміни
+                        git add repo/
 
-                    # Додаємо зміни
-                    git add repo/
+                        # Комітимо, якщо є зміни
+                        if ! git diff-index --quiet HEAD --; then
+                            git commit -m "Publish packages version ${PACKAGE_VERSION}"
+                        else
+                            echo "Nothing to commit"
+                        fi
 
-                    # Комітимо, якщо є зміни
-                    if ! git diff-index --quiet HEAD --; then
-                        git commit -m "Publish packages version ${PACKAGE_VERSION}"
-                    else
-                        echo "Nothing to commit"
-                    fi
+                        # Створюємо тег, якщо його ще немає
+                        if git rev-parse "v${PACKAGE_VERSION}" >/dev/null 2>&1; then
+                            echo "Tag v${PACKAGE_VERSION} already exists"
+                        else
+                            git tag -a v${PACKAGE_VERSION} -m "Release v${PACKAGE_VERSION}"
+                        fi
 
-                    # Створюємо тег, якщо його ще немає
-                    if git rev-parse "v${PACKAGE_VERSION}" >/dev/null 2>&1; then
-                        echo "Tag v${PACKAGE_VERSION} already exists"
-                    else
-                        git tag -a v${PACKAGE_VERSION} -m "Release v${PACKAGE_VERSION}"
-                    fi
-
-                    # Пушимо main та тег
-                    git push origin main
-                    git push origin v${PACKAGE_VERSION} || echo "Tag already pushed"
-            '''
+                        # Пушимо main та тег
+                        git push origin main
+                        git push origin v${PACKAGE_VERSION} || echo "Tag already pushed"
+                '''
+                }
             }
         }
 
