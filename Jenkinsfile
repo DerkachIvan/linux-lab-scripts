@@ -55,11 +55,14 @@ pipeline{
                 sh '''
                     apt-get update
                     apt-get install -y build-essential debhelper devscripts
+
                     mkdir -p build/${PACKAGE_NAME}-${PACKAGE_VERSION}
                     cp count_files.sh count_files.conf build/${PACKAGE_NAME}-${PACKAGE_VERSION}/
                     cp -r packaging/deb/debian build/${PACKAGE_NAME}-${PACKAGE_VERSION}/
+                    
                     cd build/${PACKAGE_NAME}-${PACKAGE_VERSION}
                     dpkg-buildpackage -us -uc -b
+                    
                     cp ../*.deb ${WORKSPACE}/
                 '''
             }
@@ -81,6 +84,33 @@ pipeline{
             }
         }
 
+        stage('Test DEB Package') {
+            agent {
+                docker {
+                    image 'ubuntu:latest'
+                    args '-u root'
+                }
+            }
+            steps {
+                sh '''
+                    set -x
+                    set -e
+
+                    # Встановлення пакета
+                    dpkg -i count-files_1.0_all.deb
+                    echo "dpkg installed with exit code $?"
+
+                    # Запуск скрипта
+                    count_files
+                    echo "count_files exit code $?"
+
+                    # Видалення пакета (ігноруємо помилку)
+                    apt-get remove -y count-files || true
+                    echo "apt-get remove exit code $?"
+                '''
+            }
+        }
+
         stage('Test DEB Installation') {
             agent {
                 docker {
@@ -94,6 +124,7 @@ pipeline{
                     dpkg -i ${PACKAGE_NAME}_*.deb || apt-get install -f -y
                     count_files
                     apt-get remove -y ${PACKAGE_NAME} || true
+                    echo "apt-get remove exit code $?"
                 '''
             }
         }
