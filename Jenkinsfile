@@ -25,12 +25,16 @@ pipeline{
             steps {
                 sh '''
                     echo "=== ShellCheck (ERROR only) ==="
-                    shellcheck -S error count_files.sh || {
-                    echo "ShellCheck detected errors (exit code $?)"
-                    echo "---------------------------------------------"
-                    shellcheck -S error count_files.sh || true
-                    exit 1
-                    }
+                    set +e
+                    shellcheck -S error count_files.sh
+                    rc=$?
+                    set -e
+
+                    echo "ShellCheck exit code: $rc"
+                    if [ "$rc" -ne 0 ]; then
+                        echo "ShellCheck errors detected"
+                        exit $rc
+                    fi
                 '''
             }
         }
