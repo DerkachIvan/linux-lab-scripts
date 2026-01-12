@@ -151,8 +151,6 @@ pipeline{
 
             agent any
             steps {
-                unstash 'rpm-artifacts'
-                unstash 'deb-artifacts'
 
                 sh '''
                     set -e
