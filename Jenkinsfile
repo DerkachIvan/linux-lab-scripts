@@ -90,9 +90,10 @@ pipeline{
             }
             steps {
                 sh '''
+                    set -e
                     dpkg -i ${PACKAGE_NAME}_*.deb || apt-get install -f -y
                     count_files
-                    apt-get remove -y ${PACKAGE_NAME}
+                    apt-get remove -y ${PACKAGE_NAME} || true
                 '''
             }
         }
