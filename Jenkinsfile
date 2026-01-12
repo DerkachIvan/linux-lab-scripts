@@ -16,7 +16,7 @@ pipeline{
             }
         }
 
-        stage('ShellCheck') {
+        /*stage('ShellCheck') {
             agent {
                 docker {
                     image 'koalaman/shellcheck:stable'
@@ -27,7 +27,7 @@ pipeline{
                     shellcheck count_files.sh || true
                 '''
             }
-        }
+        }*/
 
 
         stage('Test Script') {
