@@ -112,7 +112,7 @@ pipeline{
 
     post {
         success {
-            archiveArtifacts artifacts: 'artifacts/*.rpm, artifacts/*.deb'
+            archiveArtifacts artifacts: '${ARTIFACTS_DIR}/*.rpm, ${ARTIFACTS_DIR}/*.deb'
             echo 'Build completed successfully!'
         }
         failure {
