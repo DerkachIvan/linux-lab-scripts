@@ -84,33 +84,6 @@ pipeline{
             }
         }
 
-        stage('Test DEB Package') {
-            agent {
-                docker {
-                    image 'ubuntu:latest'
-                    args '-u root'
-                }
-            }
-            steps {
-                sh '''
-                    set -x
-                    set -e
-
-                    # Встановлення пакета
-                    dpkg -i count-files_1.0_all.deb
-                    echo "dpkg installed with exit code $?"
-
-                    # Запуск скрипта
-                    count_files
-                    echo "count_files exit code $?"
-
-                    # Видалення пакета (ігноруємо помилку)
-                    apt-get remove -y count-files || true
-                    echo "apt-get remove exit code $?"
-                '''
-            }
-        }
-
         stage('Test DEB Installation') {
             agent {
                 docker {
@@ -139,7 +112,7 @@ pipeline{
             echo 'Build failed!'
         }
         always {
-            cleanWs()
+            cleanWs() notFailBuild: true
         }
     }
 }
