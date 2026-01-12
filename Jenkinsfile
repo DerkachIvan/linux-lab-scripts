@@ -140,10 +140,10 @@ pipeline{
         success {
             sh '''
                 echo "=== FILES ==="
-                ls -la artifacts || true
+                ls -la || true
             '''
-            archiveArtifacts artifacts: 'artifacts/*.deb', allowEmptyArchive: false
-            archiveArtifacts artifacts: 'artifacts/*.rpm', allowEmptyArchive: true
+            archiveArtifacts artifacts: '*.rpm', allowEmptyArchive: true
+            archiveArtifacts artifacts: '*.deb', allowEmptyArchive: false
             echo 'Build completed successfully!'
             /*mail to: 'derkachvanya229@gmail.com',
                 subject: "Jenkins build SUCCESS: ${env.JOB_NAME}",
