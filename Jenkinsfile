@@ -150,7 +150,12 @@ pipeline{
         stage('Publish packages to Git') {
             agent any
             steps {
-                withCredentials([string(credentialsId: 'git-push-creds', variable: 'GITHUB_TOKEN')]) {
+                withCredentials([usernamePassword(
+                credentialsId: 'github-pat',
+                usernameVariable: 'GIT_USER',
+                passwordVariable: 'GIT_TOKEN'
+                )])
+                {
                     sh '''
                         git config user.name "jenkins"
                         git config user.email "jenkins@localhost"
