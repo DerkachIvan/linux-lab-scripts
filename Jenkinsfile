@@ -24,9 +24,7 @@ pipeline{
             }
             steps {
                 sh '''
-                    echo "=== ShellCheck output ==="
-                    shellcheck count_files.sh
-                    echo "ShellCheck exit code: $?"
+                    shellcheck -S error count_files.sh
                 '''
             }
         }
