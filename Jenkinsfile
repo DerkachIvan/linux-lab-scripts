@@ -160,7 +160,7 @@ pipeline{
                         git config user.name "jenkins"
                         git config user.email "jenkins@localhost"
 
-                        git add repo/deb/*.deb repo/rpm/*.rpm
+                        git add artifacts/deb/*.deb artifacts/rpm/*.rpm
                         git commit -m "Add built packages"
                         git push origin main
 
