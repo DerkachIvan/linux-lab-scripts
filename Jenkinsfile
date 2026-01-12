@@ -45,7 +45,7 @@ pipeline{
                     rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
 
                     mkdir -p ${WORKSPACE}/artifacts
-                    cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/${ARTIFACTS_DIR}/
+                    cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/artifacts}/
 
                     echo "=== RPM FILES ==="
                     ls -la ~/rpmbuild/RPMS/noarch || true
@@ -74,7 +74,7 @@ pipeline{
                     dpkg-buildpackage -us -uc -b
                     
                     mkdir -p ${WORKSPACE}/artifacts
-                    cp ../*.deb ${WORKSPACE}/${ARTIFACTS_DIR}/
+                    cp ../*.deb ${WORKSPACE}/artifacts/
                     echo "=== DEB FILES ==="
                     ls -la ../ || true
                     ls -la ${WORKSPACE}/artifacts || true
@@ -121,10 +121,10 @@ pipeline{
         success {
             sh '''
                 echo "=== FILES ==="
-                ls -la ${WORKSPACE}/artifacts || true
+                ls -la $artifacts || true
             '''
-            archiveArtifacts artifacts: '${WORKSPACE}/artifacts/*.deb', allowEmptyArchive: false
-            archiveArtifacts artifacts: '${WORKSPACE}/artifacts/*.rpm', allowEmptyArchive: true
+            archiveArtifacts artifacts: '$artifacts/*.deb', allowEmptyArchive: false
+            archiveArtifacts artifacts: '$artifacts/*.rpm', allowEmptyArchive: true
         echo 'Build completed successfully!'
         }
         failure {
