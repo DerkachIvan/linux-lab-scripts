@@ -119,8 +119,12 @@ pipeline{
 
     post {
         success {
-        archiveArtifacts artifacts: '${WORKSPACE}/artifacts/*.deb', allowEmptyArchive: false
-        archiveArtifacts artifacts: '${WORKSPACE}/artifacts/*.rpm', allowEmptyArchive: true
+            sh '''
+                echo "=== FILES ==="
+                ls -la ${WORKSPACE}/artifacts || true
+            '''
+            archiveArtifacts artifacts: '${WORKSPACE}/artifacts/*.deb', allowEmptyArchive: false
+            archiveArtifacts artifacts: '${WORKSPACE}/artifacts/*.rpm', allowEmptyArchive: true
         echo 'Build completed successfully!'
         }
         failure {
