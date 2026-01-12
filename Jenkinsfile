@@ -147,15 +147,9 @@ pipeline{
             archiveArtifacts artifacts: 'artifacts/*.rpm'
             archiveArtifacts artifacts: 'artifacts/*.deb'
             echo 'Build completed successfully!'
-            /*mail to: 'derkachvanya229@gmail.com',
-                subject: "Jenkins build SUCCESS: ${env.JOB_NAME}",
-                body: "Build ${env.BUILD_NUMBER} succeeded."*/
         }
         failure {
             echo 'Build failed!'
-            /*mail to: 'derkachvanya229@gmail.com',
-                subject: "Jenkins build FAILED: ${env.JOB_NAME}",
-                body: "Build ${env.BUILD_NUMBER} failed.\n${env.BUILD_URL}"*/
         }
         always {
             cleanWs()
