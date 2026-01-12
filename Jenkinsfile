@@ -62,11 +62,11 @@ pipeline{
                             rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
 
                             mkdir -p ${WORKSPACE}/artifacts
-                            cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/artifacts/
+                            cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/
 
                             echo "=== RPM FILES ==="
                             ls -la ~/rpmbuild/RPMS/noarch || true
-                            ls -la ${WORKSPACE}/artifacts || true
+                            ls -la ${WORKSPACE} || true
                         '''
                     }
                 }
@@ -91,10 +91,10 @@ pipeline{
                             dpkg-buildpackage -us -uc -b
                             
                             mkdir -p ${WORKSPACE}/artifacts
-                            cp ../*.deb ${WORKSPACE}/artifacts/
+                            cp ../*.deb ${WORKSPACE}/
                             echo "=== DEB FILES ==="
                             ls -la ../ || true
-                            ls -la ${WORKSPACE}/artifacts || true
+                            ls -la ${WORKSPACE} || true
                         '''
                     }
                 }
@@ -110,7 +110,7 @@ pipeline{
             }
             steps {
                 sh '''
-                    rpm -ivh ${WORKSPACE}/${ARTIFACTS_DIR}/${PACKAGE_NAME}-*.rpm
+                    rpm -ivh ${WORKSPACE}/${PACKAGE_NAME}-*.rpm
                     count_files
                     rpm -e ${PACKAGE_NAME}
                 '''
@@ -127,7 +127,7 @@ pipeline{
             steps {
                 sh '''
                     set -e
-                    dpkg -i ${WORKSPACE}/${ARTIFACTS_DIR}/${PACKAGE_NAME}_*.deb || apt-get install -f -y
+                    dpkg -i ${WORKSPACE}/${PACKAGE_NAME}_*.deb || apt-get install -f -y
                     count_files
                     apt-get remove -y ${PACKAGE_NAME} || true
                     echo "apt-get remove exit code $?"
