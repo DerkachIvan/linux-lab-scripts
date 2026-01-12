@@ -59,13 +59,14 @@ pipeline{
                             cp ${WORKSPACE}/packaging/rpm/count-files.spec ~/rpmbuild/SPECS/
                             rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
 
+                            mkdir -p ${WORKSPACE}/artifacts
                             cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/
 
                             echo "=== RPM FILES ==="
                             ls -la ~/rpmbuild/RPMS/noarch || true
                             ls -la ${WORKSPACE}/
                         '''
-                        stash name: 'rpm-artifact', includes: '${WORKSPACE}/*.rpm'
+                        stash name: 'rpm-artifact', includes: 'artifacts/*.rpm'
                     }
                 }
 
@@ -88,10 +89,12 @@ pipeline{
                             cd build/${PACKAGE_NAME}-${PACKAGE_VERSION}
                             dpkg-buildpackage -us -uc -b
                             
+                            mkdir -p ${WORKSPACE}/artifacts
+                            cp ../*.deb ${WORKSPACE}/
                             echo "=== DEB FILES ==="
-                            ls -la ../
+                            ls -la ${WORKSPACE}/artifacts
                         '''
-                        stash name: 'deb-artifact', includes: '../*.deb'
+                        stash name: 'deb-artifact', includes: 'artifacts/*.deb'
                     }
                 }
             }
