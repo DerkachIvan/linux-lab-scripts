@@ -45,7 +45,7 @@ pipeline{
                     rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
 
                     mkdir -p ${WORKSPACE}/artifacts
-                    cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/artifacts}/
+                    cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/artifacts/
 
                     echo "=== RPM FILES ==="
                     ls -la ~/rpmbuild/RPMS/noarch || true
