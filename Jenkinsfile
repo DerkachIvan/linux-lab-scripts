@@ -63,6 +63,7 @@ pipeline{
 
                             echo "=== RPM FILES ==="
                             ls -la ~/rpmbuild/RPMS/noarch || true
+                            ls -la ${WORKSPACE}/
                         '''
                         stash name: 'rpm-artifact', includes: '${WORKSPACE}/*.rpm'
                     }
