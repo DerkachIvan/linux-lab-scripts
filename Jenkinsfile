@@ -153,14 +153,7 @@ pipeline{
                 withCredentials([string(credentialsId: 'git-push-creds', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         set -e
-
-                        # Створюємо директорії для пакетів
-                        mkdir -p repo/rpm repo/deb
-
-                        # Копіюємо пакети, якщо вони є
-                        cp artifacts/*.rpm repo/rpm/ 2>/dev/null || true
-                        cp artifacts/*.deb repo/deb/ 2>/dev/null || true
-
+                        
                         # Налаштовуємо git
                         git config user.name "jenkins"
                         git config user.email "jenkins@localhost"
@@ -173,6 +166,13 @@ pipeline{
                             git fetch origin main:main
                             git checkout main
                         fi
+
+                        # Створюємо директорії для пакетів
+                        mkdir -p repo/rpm repo/deb
+
+                        # Копіюємо пакети, якщо вони є
+                        cp artifacts/*.rpm repo/rpm/ 2>/dev/null || true
+                        cp artifacts/*.deb repo/deb/ 2>/dev/null || true
 
                         # Додаємо зміни
                         git add repo/
