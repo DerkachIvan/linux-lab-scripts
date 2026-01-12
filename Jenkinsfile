@@ -123,7 +123,8 @@ pipeline{
                 sh '''
                     rpm -ivh ${WORKSPACE}/${PACKAGE_NAME}-*.rpm
                     count_files
-                    rpm -e ${PACKAGE_NAME}
+                    PACKAGE_INSTALLED=$(rpm -qa | grep ${PACKAGE_NAME} | head -n1)
+                    rpm -e $PACKAGE_INSTALLED
                 '''
             }
         }
