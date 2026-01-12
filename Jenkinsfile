@@ -75,6 +75,9 @@ pipeline{
                     
                     mkdir -p ${WORKSPACE}/artifacts
                     cp ../*.deb ${WORKSPACE}/${ARTIFACTS_DIR}/
+                    echo "=== DEB FILES ==="
+                    ls -la ../ || true
+                    ls -la ${WORKSPACE}/artifacts || true
                 '''
             }
         }
