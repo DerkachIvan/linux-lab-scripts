@@ -166,8 +166,13 @@ pipeline{
                         git config user.email "jenkins@localhost"
 
                         # Переключаємося на main і підтягнемо останні зміни
-                        git fetch origin main:main
-                        git checkout main
+                        if git show-ref --verify --quiet refs/heads/main; then
+                            git checkout main
+                            git pull --rebase origin main
+                        else
+                            git fetch origin main:main
+                            git checkout main
+                        fi
 
                         # Додаємо зміни
                         git add repo/
