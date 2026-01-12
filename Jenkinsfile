@@ -35,12 +35,16 @@ pipeline{
                 sh '''
                     dnf install -y rpm-build rpmdevtools
                     rpmdev-setuptree
+
                     mkdir -p ~/rpmbuild/SOURCES/${PACKAGE_NAME}-${PACKAGE_VERSION}
                     cp count_files.sh count_files.conf ~/rpmbuild/SOURCES/${PACKAGE_NAME}-${PACKAGE_VERSION}/
                     cd ~/rpmbuild/SOURCES/
+                    
                     tar czvf ${PACKAGE_NAME}-${PACKAGE_VERSION}.tar.gz ${PACKAGE_NAME}-${PACKAGE_VERSION}
                     cp ${WORKSPACE}/packaging/rpm/count-files.spec ~/rpmbuild/SPECS/
                     rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
+
+                    mkdir -p ${WORKSPACE}/artifacts
                     cp ~/rpmbuild/RPMS/noarch/*.rpm ${WORKSPACE}/${ARTIFACTS_DIR}/
                 '''
             }
@@ -65,6 +69,7 @@ pipeline{
                     cd build/${PACKAGE_NAME}-${PACKAGE_VERSION}
                     dpkg-buildpackage -us -uc -b
                     
+                    mkdir -p ${WORKSPACE}/artifacts
                     cp ../*.deb ${WORKSPACE}/${ARTIFACTS_DIR}/
                 '''
             }
