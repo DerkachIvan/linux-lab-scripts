@@ -162,7 +162,7 @@ pipeline{
 
                         echo "=== FILES ==="
                         ls -la artifacts
-                        git add artifacts/deb/*.deb artifacts/rpm/*.rpm
+                        git add artifacts/*.deb artifacts/*.rpm
                         git commit -m "Add built packages"
                         git push origin main
 
