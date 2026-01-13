@@ -51,6 +51,13 @@ jobs:
       - name: Setup RPM build environment
         run: rpmdev-setuptree
 
+      - name: Determine package version
+        id: version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo 1.0.0)
+          echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Determined package version: $VERSION"
+
       - name: Prepare sources
         run: |
           mkdir -p ~/rpmbuild/SOURCES/count-files-1.0
