@@ -163,6 +163,7 @@ pipeline{
                         echo "=== FILES ==="
                         ls -la artifacts
 
+                        git pull
                         git add artifacts/*.deb artifacts/*.rpm
                         git commit -m "Add built packages"
 
