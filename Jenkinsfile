@@ -176,6 +176,39 @@ pipeline{
             }
         }
 
+        stage('Tag Release') {
+            agent any
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'github-pat',
+                    usernameVariable: 'GIT_USER',
+                    passwordVariable: 'GIT_TOKEN'
+                )]) {
+                    sh """
+                        git config user.name "jenkins"
+                        git config user.email "jenkins@localhost"
+
+                        # Отримати останній тег
+                        LAST_TAG=\$(git describe --tags --abbrev=0 || echo "v0.0.0")
+                        
+                        # Вирахувати новий тег (patch+1)
+                        IFS='.' read -r MAJOR MINOR PATCH <<< \$(echo \$LAST_TAG | sed 's/v//')
+                        PATCH=\$((PATCH+1))
+                        NEW_TAG="v\$MAJOR.\$MINOR.\$PATCH"
+
+                        echo "Last tag: \$LAST_TAG"
+                        echo "New tag: \$NEW_TAG"
+
+                        # Створюємо тег і пушимо на GitHub
+                        git tag \$NEW_TAG
+                        git remote set-url origin https://$GIT_USER:$GIT_TOKEN@github.com/DerkachIvan/linux-lab-scripts.git
+                        git push origin \$NEW_TAG
+                    """
+                }
+            }
+        }
+
+
     }
 
     post {
