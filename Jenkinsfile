@@ -169,7 +169,7 @@ pipeline{
                         git add artifacts/*.deb artifacts/*.rpm
                         git commit -m "Add built packages"
 
-                        git push origin main
+                        git push -f origin HEAD:main
 
                     '''
                 }
