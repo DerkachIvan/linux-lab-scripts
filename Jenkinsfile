@@ -163,11 +163,12 @@ pipeline{
                         echo "=== FILES ==="
                         ls -la artifacts
 
-                        git pull
+                        git remote set-url origin https://$GIT_USER:$GIT_TOKEN@github.com/DerkachIvan/linux-lab-scripts.git
+                        git pull origin main
+                        
                         git add artifacts/*.deb artifacts/*.rpm
                         git commit -m "Add built packages"
 
-                        git remote set-url origin https://$GIT_USER:$GIT_TOKEN@github.com/DerkachIvan/linux-lab-scripts.git
                         git push origin main
 
                     '''
