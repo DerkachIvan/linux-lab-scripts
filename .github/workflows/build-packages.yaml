@@ -63,7 +63,7 @@ jobs:
         run: cp packaging/rpm/count-files.spec ~/rpmbuild/SPECS/
 
       - name: Build RPM
-        run: rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec
+        run: rpmbuild -ba ~/rpmbuild/SPECS/count-files.spec --define "PACKAGE_VERSION $PACKAGE_VERSION"
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v4
